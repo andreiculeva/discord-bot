@@ -808,9 +808,8 @@ class events(commands.Cog):
         log_message = discord.PartialMessage(channel=self.bot.get_channel(982282223166304277), id=999611278832189501)
         subprocess.Popen(["/usr/lib/git-core/git", "add", "."], cwd=os.getcwd())
         subprocess.Popen(["/usr/lib/git-core/git", "commit", "-m", "daily backup"], cwd=os.getcwd())
-        a = subprocess.Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd(), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        output, error = a.communicate()
-        await log_message.edit(content=f"Ran daily backup {discord.utils.format_dt(discord.utils.utcnow())}\n{output=}\n{error=}")
+        subprocess.Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd())
+        await log_message.edit(content=f"Ran daily backup {discord.utils.format_dt(discord.utils.utcnow())}")
 
 
     @daily_backup.before_loop
