@@ -27,6 +27,7 @@ async def main():
         return print("'token' is missing in the .env file")
     bot= botconfig.AndreiBot(activity=discord.Activity(type=discord.ActivityType.listening,
                                               name=os.getenv("status_description")))
+    
     await asyncio.sleep(5)
     
     await bot.start(tk, reconnect=True)
