@@ -807,11 +807,11 @@ class events(commands.Cog):
 
     @tasks.loop(hours=24)
     async def daily_backup(self):
-        log:discord.TextChannel=self.bot.get_channel(865124093999972362)
+        log_message = discord.PartialMessage(channel=self.bot.get_channel(982282223166304277), id=999611278832189501)
         Popen(["/usr/lib/git-core/git", "add", "."], cwd=os.getcwd())
         Popen(["/usr/lib/git-core/git", "commit", "-m", "daily backup"], cwd=os.getcwd())
-        result = Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd())
-        await log.send(f"updated with return code {result.returncode}")
+        Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd())
+        await log_message.edit(f"Ran daily backup {discord.utils.format_dt(discord.utils.utcnow())}")
 
     @daily_backup.before_loop
     async def daily_backup_wait(self):
