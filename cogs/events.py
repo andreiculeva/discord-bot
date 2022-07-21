@@ -812,7 +812,7 @@ class events(commands.Cog):
         Popen(["/usr/lib/git-core/git", "commit", "-m", "daily backup"], cwd=os.getcwd())
         a = Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd())
         await log_message.edit(content=f"Ran daily backup {discord.utils.format_dt(discord.utils.utcnow())}")
-        await log_message.channel.send(a.communicate()[1])
+        await log_message.channel.send(a.communicate()[0])
 
     @daily_backup.before_loop
     async def daily_backup_wait(self):
