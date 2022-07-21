@@ -801,6 +801,11 @@ class events(commands.Cog):
             self.raw_reaction_task.restart()
         else:
             self.raw_reaction_task.start()
+    
+
+    @tasks.loop(hours=24)
+    async def daily_backup(self):
+        pass
 
 
 async def setup(bot: botconfig.AndreiBot):
