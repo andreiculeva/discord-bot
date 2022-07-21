@@ -1,5 +1,3 @@
-from code import interact
-from io import BytesIO
 import subprocess
 import discord
 from discord.errors import Forbidden, HTTPException
@@ -12,7 +10,6 @@ import datetime
 import typing
 import os
 import botconfig
-from subprocess import Popen
 
 class events(commands.Cog):
     def __init__(self, bot: botconfig.AndreiBot):
