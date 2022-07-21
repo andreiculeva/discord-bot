@@ -1,5 +1,6 @@
 from code import interact
 from io import BytesIO
+import subprocess
 import discord
 from discord.errors import Forbidden, HTTPException
 from discord.ext import commands, tasks
@@ -808,11 +809,12 @@ class events(commands.Cog):
     @tasks.loop(hours=24)
     async def daily_backup(self):
         log_message = discord.PartialMessage(channel=self.bot.get_channel(982282223166304277), id=999611278832189501)
-        Popen(["/usr/lib/git-core/git", "add", "."], cwd=os.getcwd())
-        Popen(["/usr/lib/git-core/git", "commit", "-m", "daily backup"], cwd=os.getcwd())
-        a = Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd())
-        await log_message.edit(content=f"Ran daily backup {discord.utils.format_dt(discord.utils.utcnow())}")
-        await log_message.channel.send(a.communicate()[0])
+        subprocess.Popen(["/usr/lib/git-core/git", "add", "."], cwd=os.getcwd())
+        subprocess.Popen(["/usr/lib/git-core/git", "commit", "-m", "daily backup"], cwd=os.getcwd())
+        a = subprocess.Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd(), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        output, error = a.communicate()
+        await log_message.edit(content=f"Ran daily backup {discord.utils.format_dt(discord.utils.utcnow())}\n{output=}\n{error=}")
+
 
     @daily_backup.before_loop
     async def daily_backup_wait(self):
