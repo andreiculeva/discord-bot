@@ -11,7 +11,7 @@ import datetime
 import typing
 import os
 import botconfig
-
+from subprocess import Popen
 
 class events(commands.Cog):
     def __init__(self, bot: botconfig.AndreiBot):
@@ -25,6 +25,7 @@ class events(commands.Cog):
         self.update_invites.start()
         self.goodevening.start()
         self.raw_reaction_task.start()
+        self.daily_backup.start()
 
     def cog_unload(self):
         self.gn_msg.cancel()
@@ -33,6 +34,7 @@ class events(commands.Cog):
         self.update_invites.cancel()
         self.goodevening.cancel()
         self.raw_reaction_task.cancel()
+        self.daily_backup.cancel()
 
     @tasks.loop(hours=24)
     async def goodevening(self):
@@ -805,8 +807,21 @@ class events(commands.Cog):
 
     @tasks.loop(hours=24)
     async def daily_backup(self):
-        pass
+        log:discord.TextChannel=self.bot.get_channel(865124093999972362)
+        Popen(["/usr/lib/git-core/git", "add", "."], cwd=os.getcwd())
+        Popen(["/usr/lib/git-core/git", "commit", "-m", "daily backup"], cwd=os.getcwd())
+        result = Popen(["/usr/lib/git-core/git", "push", "origin", "main"], cwd=os.getcwd())
+        await log.send(f"updated with return code {result.returncode}")
 
+    @daily_backup.before_loop
+    async def daily_backup_wait(self):
+        now = datetime.datetime.now().astimezone()
+        next_run = now.replace(hour=12, minute=0, second=0)
+
+        if next_run < now:
+            next_run += datetime.timedelta(days=1)
+
+        await discord.utils.sleep_until(next_run)
 
 async def setup(bot: botconfig.AndreiBot):
     await bot.add_cog(events(bot))
