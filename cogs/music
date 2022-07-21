@@ -1,0 +1,49 @@
+import wave
+import wavelink
+from discord.ext import commands
+from wavelink.ext import spotify
+import typing
+import discord
+
+from botconfig import AndreiBot
+
+
+class music(commands.Cog):
+    """very limited, I didn't add anything other than the play command"""
+
+    def __init__(self, bot: AndreiBot):
+        self.bot = bot
+        bot.loop.create_task(self.connect_nodes())
+
+    async def connect_nodes(self):
+        await self.bot.wait_until_ready()
+        await wavelink.NodePool.create_node(bot=self.bot,
+                                            # host='0.0.0.0',
+                                            # port=2333,
+                                            # password='youshallnotpass',
+                                            host="lavalink.oops.wtf",
+                                            port=2000,
+                                            password="www.freelavalink.ga",
+                                            spotify_client=spotify.SpotifyClient(
+                                                client_id="c2e1a81bf7a6417eb3c530e0527f71a4",
+                                                client_secret="6edf98cbe0fb454fbff2b861b13a6dda"))
+
+    @commands.Cog.listener()
+    async def on_wavelink_node_ready(self, node: wavelink.Node):
+        """Event fired when a node has finished connecting."""
+        #await self.bot.get_channel(865124093999972362).send("node ready")
+
+    @commands.command(aliases=["p"])
+    async def play(self, ctx: commands.Context, *, query: str):
+        """Play a song with the given search query."""
+        if not ctx.voice_client:
+            vc: wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
+        else:
+            vc: wavelink.Player = ctx.voice_client
+        track = await wavelink.YouTubeTrack.search(query=query, return_first=True)
+        song = await vc.play(track)
+        await ctx.send(f"Playing <{song.info['uri']}>")
+
+
+async def setup(bot: AndreiBot):
+    await bot.add_cog(music(bot))
