@@ -29,8 +29,11 @@ async def main():
                                               name=os.getenv("status_description")))
     
     await asyncio.sleep(5)
-    
-    await bot.start(tk, reconnect=True)
+    while True:
+        try:
+            await bot.start(tk, reconnect=True)
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":
